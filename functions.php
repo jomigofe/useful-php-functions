@@ -1,6 +1,6 @@
 <?
 
-/**
+	/**
 	 * Creates an array with the built 'sql' query, the 'vars' to the query and a 'debug' version of the query
 	 *
 	 * @param string  $table    The table where the date will be inserted
