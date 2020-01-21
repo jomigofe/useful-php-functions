@@ -13,7 +13,7 @@ Just copy paste
 
 ## SQL functions
 
-#### buildInsertValues
+#### [buildInsertValues](https://github.com/clobberze/useful-php-functions/blob/master/functions.php#L37 "buildInsertValues")
 
     array buildInsertValues(string $table, array $fieldss, array $data)
 
