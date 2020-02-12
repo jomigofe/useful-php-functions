@@ -32,7 +32,7 @@
 	 *                  )
 	 * 
 	 * @author José Ferreira <jose@someofmy.work>
-	 * @return Array('sql'=>...,'debug'=>...,'vars'=>...)
+	 * @return array('sql'=>...,'debug'=>...,'vars'=>...)
 	 */ 
 	function buildInsertValues($table, $fieldss, $data) {
 		$fields = $values = $vars = $debug = array();
@@ -70,6 +70,72 @@
 
 	function sanitizeFloat($num) {
 		return filter_var($num,FILTER_SANITIZE_NUMBER_FLOAT,FILTER_FLAG_ALLOW_FRACTION);
+	}
+
+
+	/**
+	 * Returns an array without empty fields nor empty arrays
+	 *
+	 * @param array   $array
+	 * 
+	 * @author José Ferreira <jose@someofmy.work>
+	 * @return array(...)
+	 */ 
+	function arrayFilterRecursive($array) {
+		foreach ($array as $key => &$value) {
+			if (!(!is_null($value) && $value !== '')) {
+				unset($array[$key]);
+			} else {
+				if (is_array($value)) {
+					$value = arrayFilterRecursive($value);
+					if (empty($value)) {
+						unset($array[$key]);
+					}
+				}
+			}
+		}
+
+		return $array;
+	}
+
+	/**
+	 * Returns an array without empty fields nor empty arrays
+	 *
+	 * @param array   $array  Array of fields ex:
+	 *                  array(
+	 *                    0 => 'first elm',
+	 *                    2 => 'second elm',
+	 *                    3 => 'third elm',
+	 *                    4 => 'forth elm'
+	 *                  )
+	 * @param array   $ignore  Array of keys to ignore ex:
+	 										array('key1','key2')
+	 * 
+	 * @author José Ferreira <jose@someofmy.work>
+	 * @return array(
+	 *           0 => 'first elm',
+	 *           1 => 'second elm',
+	 *           2 => 'third elm',
+	 *           3 => 'forth elm'
+	 *         )
+	 */
+	function fixArrayKeyForJsonRecursive($array, $ignore = array()) {
+		$toReturn = array();
+
+		foreach ($array as $k => $v) {
+			if(is_array($v)) {
+				if(!in_array($k, $ignore)) {
+					//check if array keys are all numeric
+					if(ctype_digit(implode('',array_keys($v)))) {
+						$v = array_values($v);
+					}
+				}
+				$array[$k] = fixArrayKeyForJsonRecursive($v, $ignore);
+			} else {
+				$array[$k] = $v;
+			}
+		}
+		return $array;
 	}
 
 ?>
